@@ -25,12 +25,7 @@ const step2 = () =>{
     videoElem.autoplay = 'true';
     videoElem.width = width;
     videoElem.height = height;
-    // videoElem.videoWidth = width;
-    // videoElem.videoHeight = height;
-    // videoElem.style.width = '100%';
-    // videoElem.style.height = `${height}px`;
     videoElem.style.position = 'absolute';
-    // videoElem.style.left = `${-width * 0.5}px`;
     videoElem.id = 'videoElement';
     videoElem.style.objectFit = 'cover';
     videoElem.style.overflow = 'hidden';
@@ -73,8 +68,6 @@ const step2 = () =>{
 }
 
 const takePhoto = () => {
-    // snap.currentTime = 0;
-    // snap.play();
     const { width, height } = getImgSize(state.frameNum);
     const video = document.getElementById('videoElement');
     const canvas = document.createElement('canvas');
@@ -83,7 +76,6 @@ const takePhoto = () => {
     const context = canvas.getContext("2d");
     context.translate(width, 0);
     context.scale(-1, 1);
-    // canvas.getContext("2d").drawImage(video, 0, 0, width, height);
     canvas.getContext("2d").drawImage(video, 0, 0, width * 0.8, height * 0.8, 0, 0, canvas.width, canvas.height);
     const dataURL = canvas.toDataURL("image/png");
     state.dataURLs.push(dataURL);

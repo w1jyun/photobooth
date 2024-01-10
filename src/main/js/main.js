@@ -1,3 +1,3 @@
-import menu from './menu';
+import init from './0.opening';
 
-menu();
+init();

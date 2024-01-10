@@ -1,4 +1,4 @@
-import stage from './stage1';
+import step1 from './1.selectFrame';
 
 export default () => {
     init();
@@ -27,14 +27,9 @@ const initSnow = () => {
     Array.from(snowElements).forEach(element => {
         element.style.setProperty('--snow-color', getRandomColor());
     });
-    // for (let i = 0; i < snowElements.length; i++) {
-    //     const snowElement = snowElements[i];
-    // }
 }
+
 const initBackground = () =>{
-    // document.body.style.backgroundImage = 'url("/assets/background.png")';
-    // document.body.style.backgroundRepeat = 'no-repeat';
-    // document.body.style.backgroundPosition = 'center bottom';
     document.body.style.backgroundSize = '100%';
     document.body.style.backgroundColor = 'rgb(91 16 4)';
 
@@ -54,7 +49,7 @@ const clickCallback = () => {
     document.body.style.backgroundColor = 'rgb(249 243 243)';
     window.removeEventListener('click', clickCallback);
     document.body.replaceChildren();
-    stage();
+    step1();
 }
 
 const initEvent  = () => {
