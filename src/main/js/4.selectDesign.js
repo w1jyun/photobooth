@@ -1,69 +1,9 @@
 import state from './state';
-import { getImgSize } from './utils';
-// import step5 from './stage5';
-import convert from '@csstools/convert-colors/index';
+import { getImgSize, makeButton } from './utils';
+import { grayscaleFilter, brightnessFilter, colorEnhanceFilter } from './filters';
+import step5 from './5.download';
 
-const constrast = (v, mag) => {
-    v = v / 255.0
-    v = (v - mag * Math.sin(2*(Math.PI)*v) / (4 * Math.PI))
-    
-    if (v < 0) v = 0;
-    else if (v > 1) v = 1;
-    return (v * 255)
-}
-
-const gamma_correction = (v, gamma) => {
-    v = v / 255.0
-    result = v ** (1/gamma)
-    result = (result * 255)
-    return result
-}
-
-
-const grayscaleFilter = (pixels) => {
-    const d = pixels.data;
-    // image processing logic
-    for (let i = 0; i < d.length; i+=4){
-        const r = d[i];  
-        const g = d[i+1];     
-        const b = d[i+2];      
-        const v = 0.2126*r + 0.7152*g + 0.0722*b;  // 보정값  
-        // contrast
-        d[i] = d[i+1] = d[i+2] = constrast(v, 0.3)
-    }
-    return pixels;
-}
-
-const brightnessFilter = (pixels) => {
-    const d = pixels.data;
-    // image processing logic
-    for (let i =0; i< d.length; i+=4) {
-        d[i] = gamma_correction(d[i], 1.1);
-        d[i+1] = gamma_correction(d[i+1], 1.1);
-        d[i+2] = gamma_correction(d[i+2], 1.1);
-
-        d[i] = constrast(d[i], 0.4)
-        d[i+1] = constrast(d[i+1], 0.4)
-        d[i+2] = constrast(d[i+2], 0.4)
-    }
-    return pixels;
-}
-
-const colorEnhanceFilter = (pixels) => {
-    const d = pixels.data;
-    for (let i = 0; i < d.length; i+=4) {
-        d[i] = gamma_correction(d[i], 1.1);
-        d[i+1] = gamma_correction(d[i+1], 1.1);
-        d[i+2] = gamma_correction(d[i+2], 1.1);
-
-        d[i] = constrast(d[i], 0.4) * 1.1;
-        d[i+1] = constrast(d[i+1], 0.4) * 1.1;
-        d[i+2] = constrast(d[i+2], 0.4) * 1.1;
-   }
-   return pixels;
-}
-
-const currState = {
+const state = {
     bg: 0,
     filter: 0,
     originPixels: [],
@@ -102,12 +42,15 @@ const step4 = () =>{
     const preview = createPreview();
     const bgMenu = createBgMenu();
     const filterMenu = createFilterMenu();
-//     const menuContainer = document.createElement('div');
-//     menuContainer.id = 'menuContainer';
-//     menuContainer.style.display = 'grid';
-//     menuContainer.style.gridTemplateRows = '400px 400px';
-//     menuContainer.style.position = 'relative;';
+
+    const nextBtn = makeButton('Next', () => {
+        document.body.replaceChildren();
+        step5();
+    });
+
+    document.body.appendChild(nextBtn);
 }
+
 const createFilterMenu = () => {
     const filterMenu = document.createElement('div');
     filterMenu.style.display = 'absolute';
@@ -149,9 +92,8 @@ const selectFilter = (idx) => {
     }
 
     const canvas = document.getElementsByClassName('cvs');
-    console.log(canvas)
     Array.from(canvas).forEach((cvs, i)=>{
-        const pixels = currState.originPixels[i];
+        const pixels = state.originPixels[i];
         const pixels_ = new ImageData(
             new Uint8ClampedArray(pixels.data),
             pixels.width,
@@ -165,18 +107,17 @@ const selectFilter = (idx) => {
 
 const changeBg = (dir) => {
     // change state
-    currState.bg += dir * 1;
-    console.log(currState.bg)
-    if (currState.bg < 0) currState.bg = colors.length - 1;
-    if (currState.bg >= colors.length) currState.bg = 0;
+    state.bg += dir * 1;
+    if (state.bg < 0) state.bg = colors.length - 1;
+    if (state.bg >= colors.length) state.bg = 0;
 
     // change view
     const bgColorPreview = document.querySelector('#bgColorPreview');
-    bgColorPreview.innerText = colors[currState.bg].name;
-    bgColorPreview.style.color = colors[currState.bg].textColor;
-    bgColorPreview.style.backgroundColor = colors[currState.bg].bgColor;
-    document.querySelector('#preview').style.backgroundColor = colors[currState.bg].bgColor;
-    document.querySelector('#logoText').style.color =  colors[currState.bg].textColor;
+    bgColorPreview.innerText = colors[state.bg].name;
+    bgColorPreview.style.color = colors[state.bg].textColor;
+    bgColorPreview.style.backgroundColor = colors[state.bg].bgColor;
+    document.querySelector('#preview').style.backgroundColor = colors[state.bg].bgColor;
+    document.querySelector('#logoText').style.color =  colors[state.bg].textColor;
 }
 
 const createBgMenu = () => {
@@ -225,7 +166,7 @@ const createBgMenu = () => {
 const createPreview = () => {
     const preview = document.createElement('div');
     preview.id = 'preview';
-    preview.style.backgroundColor = colors[currState.bg].bgColor;
+    preview.style.backgroundColor = colors[state.bg].bgColor;
     preview.style.position = 'absolute';
     preview.style.left = '80px';
     const imgContainer = document.createElement('div');
@@ -235,7 +176,7 @@ const createPreview = () => {
     const logoText = document.createElement('div');
     logoText.id = 'logoText';
     logoText.innerText = 'YUN\nFILM';
-    logoText.style.color =  colors[currState.bg].textColor;
+    logoText.style.color =  colors[state.bg].textColor;
     let frameW = 0;
     let frameH = 0;
     const { width: imgW, height: imgH } = getImgSize(state.frameNum);
@@ -315,7 +256,7 @@ const createPreview = () => {
         const ctx = canvas.getContext('2d');
         img.onload = () => {
             ctx.drawImage(img, 0, 0, imgW, imgH);
-            currState.originPixels.push(ctx.getImageData(0,0, imgW, imgH))
+            state.originPixels.push(ctx.getImageData(0,0, imgW, imgH))
         };
         canvas.className = 'cvs';
         canvas.width = imgW;

@@ -1,5 +1,5 @@
 import state from './state'
-import step3 from './stage3';
+import step3 from './3.selectPhoto';
 import { getImgSize } from './utils';
 
 export default () => {
@@ -83,8 +83,6 @@ const takePhoto = () => {
     const context = canvas.getContext("2d");
     context.translate(width, 0);
     context.scale(-1, 1);
-    console.log(video);
-    console.log(width, height);
     // canvas.getContext("2d").drawImage(video, 0, 0, width, height);
     canvas.getContext("2d").drawImage(video, 0, 0, width * 0.8, height * 0.8, 0, 0, canvas.width, canvas.height);
     const dataURL = canvas.toDataURL("image/png");

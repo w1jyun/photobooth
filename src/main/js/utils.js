@@ -4,7 +4,6 @@ export const getCutNum = (frameNum) => {
 }
 
 export const getImgSize = (frameNum) => {
-    console.log('state.frameNum', frameNum);
     if (frameNum == 1) {
         return { width: 1000, height: 600 };
     } else if (frameNum == 2) {

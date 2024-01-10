@@ -1,10 +1,6 @@
 import state from './state';
-import step2 from './stage2';
+import step2 from './2.capture';
 import { makeButton } from './utils';
-
-// let frameNum = 0;
-// let dataURLs = [];
-// let selectedIdx = new Set();
 
 export default () => {
     step1();
@@ -59,9 +55,4 @@ const step1 = () =>{
     });
     document.body.appendChild(cutMenu);
     document.body.appendChild(nextBtn);
-}
-
-const step5 = () =>{
-    const msg = document.getElementById('stageMsg')
-    msg.innerHTML = ''
 }
