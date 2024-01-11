@@ -1,5 +1,5 @@
 {
-  "name": "postcard",
+  "name": "photobooth",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "build": "node esbuild.config.mjs",
     "dev": "node esbuild.config.mjs && nodemon server.js"
   },
-  "repository": "git+https://github.com/w1jyun/postcard",
+  "repository": "git+https://github.com/w1jyun/photobooth",
   "author": "w1jyun <w1jyun@postech.ac.kr>",
   "license": "ISC",
   "dependencies": {
