@@ -37,7 +37,7 @@ export default () => {
 
 
 const exportElementAsPNG = (el, filename) => {
-	html2canvas(el, { scale: 4 }).then((canvas) => {
+	html2canvas(el, { scale: 6 }).then((canvas) => {
 		const image = canvas.toDataURL('image/png', 1);
 		const link = window.document.createElement('a');
 		link.style = 'display:none;';
