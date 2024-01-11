@@ -47,6 +47,10 @@ const step2 = () =>{
 
     document.body.appendChild(timerDiv);
 
+    const audio = new Audio('/assets/snap.mp3');
+    audio.id = 'audio';
+    document.body.appendChild(audio);
+
     videoElem.addEventListener( "loadedmetadata", () => {
         const camRatio = videoElem.videoWidth / videoElem.videoHeight;
         const imgRatio = width / height;
@@ -107,6 +111,8 @@ const step2 = () =>{
 }
 
 const takePhoto = () => {
+    const audio = document.getElementById('audio');
+    audio.play();
     const { width, height } = getImgSize(state.frameNum);
     const video = document.getElementById('videoElement');
     const canvas = document.createElement('canvas');
