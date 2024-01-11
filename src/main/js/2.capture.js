@@ -6,6 +6,13 @@ export default () => {
     step2();
 }
 
+const camInfo = {
+    camW: 640,
+    camH: 380,
+    paddingW: 0,
+    paddingH: 0,
+}
+
 const step2 = () =>{
     const msg = document.createElement('div');
     msg.id = 'stageMsg';
@@ -13,6 +20,7 @@ const step2 = () =>{
     document.body.appendChild(msg);
     const videoContainer = document.createElement('div');
     const { width, height } = getImgSize(state.frameNum);
+    videoContainer.id = 'videoContainer';
     videoContainer.style.width = `${width}px`;
     videoContainer.style.height = `${height}px`;
     videoContainer.style.top = '140px';
@@ -27,6 +35,7 @@ const step2 = () =>{
     videoElem.height = height;
     videoElem.style.position = 'absolute';
     videoElem.id = 'videoElement';
+    videoElem.style.top = '0px';
     videoElem.style.objectFit = 'cover';
     videoElem.style.overflow = 'hidden';
     videoContainer.appendChild(videoElem);
@@ -37,21 +46,50 @@ const step2 = () =>{
     timerDiv.style.position = 'absolute';
 
     document.body.appendChild(timerDiv);
-    
+
+    videoElem.addEventListener( "loadedmetadata", () => {
+        const camRatio = videoElem.videoWidth / videoElem.videoHeight;
+        const imgRatio = width / height;
+        if (imgRatio > camRatio){
+            camInfo.camW = videoElem.videoWidth;
+            camInfo.camH = camInfo.camW * (height / width);
+            camInfo.paddingH = (videoElem.videoHeight - camInfo.camH) / 2;
+        } else {
+            camInfo.camH = videoElem.videoHeight;
+            camInfo.camW = camInfo.camH * (width / height);
+            camInfo.paddingW = (videoElem.videoWidth - camInfo.camW) / 2;
+        }
+    });
+
     if (navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ video: true })
             .then((stream) => {
                 videoElem.srcObject = stream;
-                let time = 10
+                let time = 10;
                 timerDiv.innerText = time;
-                let count = 0
+                let count = 0;
+                let pauseCount = 0;
+
                 const intervalId = setInterval(()=>{
+                    if (pauseCount > 0) {
+                        pauseCount -= 1;
+                        if (pauseCount == 0) {
+                            videoElem.style.opacity = 1;
+                            timerDiv.style.opacity = 1;
+                            const canvas = document.getElementById('tmpCanvas');
+                            if (canvas) document.getElementById('videoContainer').removeChild(canvas);
+                        }
+                        return;
+                    }
                     time -= 1;
                     timerDiv.innerHTML = time;
                     if (time == 0) {
                         takePhoto();
+                        pauseCount = 2;
                         time = 10;
                         timerDiv.innerHTML = time;
+                        timerDiv.style.opacity = 0;
+                        videoElem.style.opacity = 0;
                         count += 1;
                         if (count == 8) {
                             clearInterval(intervalId);
@@ -59,7 +97,8 @@ const step2 = () =>{
                             step3();
                         }
                     }
-                }, 10);
+                }, 1000);
+
             })
             .catch((err) => {
                 window.alert('something went wrong');
@@ -73,10 +112,12 @@ const takePhoto = () => {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
+    canvas.id = 'tmpCanvas';
     const context = canvas.getContext("2d");
     context.translate(width, 0);
     context.scale(-1, 1);
-    canvas.getContext("2d").drawImage(video, 0, 0, width * 0.8, height * 0.8, 0, 0, canvas.width, canvas.height);
+    canvas.getContext("2d").drawImage(video, camInfo.paddingW, camInfo.paddingH, camInfo.camW, camInfo.camH, 0, 0, canvas.width, canvas.height);
     const dataURL = canvas.toDataURL("image/png");
     state.dataURLs.push(dataURL);
+    document.getElementById('videoContainer').appendChild(canvas);
 }
