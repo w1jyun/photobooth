@@ -1,12 +1,14 @@
 import state from './state';
 import { getImgSize, makeButton } from './utils';
 import { grayscaleFilter, brightnessFilter, colorEnhanceFilter } from './filters';
-import step5 from './5.download';
+import html2canvas from 'html2canvas';
 
-const state = {
-    bg: 0,
-    filter: 0,
-    originPixels: [],
+const getDateStr = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2,'0');
+    const day = `${date.getDate()}`.padStart(2,'0');
+    return `${year}${month}${day}`;
 }
 
 const colors = [
@@ -34,6 +36,17 @@ export default () => {
 }
 
 
+const exportElementAsPNG = (el, filename) => {
+	html2canvas(el, { scale: 4 }).then((canvas) => {
+		const image = canvas.toDataURL('image/png', 1);
+		const link = window.document.createElement('a');
+		link.style = 'display:none;';
+		link.download = filename + '.png';
+		link.href = image;
+		link.click();
+	});
+};
+
 const step4 = () =>{
     const msg = document.createElement('div');
     msg.id = 'stageMsg';
@@ -43,12 +56,12 @@ const step4 = () =>{
     const bgMenu = createBgMenu();
     const filterMenu = createFilterMenu();
 
-    const nextBtn = makeButton('Next', () => {
-        document.body.replaceChildren();
-        step5();
+    const DownloadBtn = makeButton('Download', () => {
+        exportElementAsPNG(document.querySelector('#preview'), `${getDateStr()}_${state.frameNum}_${colors[state.bg].name}`);
     });
 
-    document.body.appendChild(nextBtn);
+    DownloadBtn.id = 'downloadBtn'
+    document.body.appendChild(DownloadBtn);
 }
 
 const createFilterMenu = () => {
@@ -91,6 +104,7 @@ const selectFilter = (idx) => {
         }
     }
 
+    state.filter = idx;
     const canvas = document.getElementsByClassName('cvs');
     Array.from(canvas).forEach((cvs, i)=>{
         const pixels = state.originPixels[i];
@@ -115,9 +129,11 @@ const changeBg = (dir) => {
     const bgColorPreview = document.querySelector('#bgColorPreview');
     bgColorPreview.innerText = colors[state.bg].name;
     bgColorPreview.style.color = colors[state.bg].textColor;
+
     bgColorPreview.style.backgroundColor = colors[state.bg].bgColor;
     document.querySelector('#preview').style.backgroundColor = colors[state.bg].bgColor;
     document.querySelector('#logoText').style.color =  colors[state.bg].textColor;
+    document.querySelector('#dateText').style.color =  colors[state.bg].textColor;
 }
 
 const createBgMenu = () => {
@@ -177,6 +193,12 @@ const createPreview = () => {
     logoText.id = 'logoText';
     logoText.innerText = 'YUN\nFILM';
     logoText.style.color =  colors[state.bg].textColor;
+
+    const dateText = document.createElement('div');
+    dateText.id = 'dateText';
+    dateText.innerText = getDateStr();
+    dateText.style.color =  colors[state.bg].textColor;
+
     let frameW = 0;
     let frameH = 0;
     const { width: imgW, height: imgH } = getImgSize(state.frameNum);
@@ -195,11 +217,20 @@ const createPreview = () => {
         logoText.style.fontSize = '30';
         logoText.style.lineHeight = '30px';
         logoText.style.bottom = '10px';
+
+        dateText.style.width = '100px';
+        dateText.style.height = '20px';
+        dateText.style.fontSize = '8';
+        dateText.style.lineHeight = '8px';
+        dateText.style.bottom = '5px';
+        dateText.style.left = '50%';
+        dateText.style.marginLeft = '-50px';
+        dateText.style.textAlign = 'center';
     } else if (state.frameNum == 2) {
         frameW = 1000;
         frameH = 1800;    
         imgContainer.style.gridTemplateRows = '1fr 1fr 1fr'
-        imgContainer.style.top = '5px';
+        imgContainer.style.top = '10px';
         imgContainer.style.left = '50%';
         imgContainer.style.marginLeft =  `${-(imgW * 0.15 + 2.5)}px`;
         logoText.style.width = '60px';
@@ -208,13 +239,22 @@ const createPreview = () => {
         logoText.style.marginLeft = '-30px';
         logoText.style.fontSize = '18';
         logoText.style.lineHeight = '18px';
-        logoText.style.bottom = '0px';
+        logoText.style.bottom = '-5px';
+
+        dateText.style.width = '100px';
+        dateText.style.height = '10px';
+        dateText.style.fontSize = '6';
+        dateText.style.lineHeight = '6px';
+        dateText.style.bottom = '5px';
+        dateText.style.left = '50%';
+        dateText.style.marginLeft = '-50px';
+        dateText.style.textAlign = 'center';
     } else if (state.frameNum == 3) {
         frameW = 1800;
         frameH = 1200;
         imgContainer.style.gridTemplateRows = '1fr 1fr'
         imgContainer.style.gridTemplateColumns = '1fr 1fr'
-        imgContainer.style.top = '20px';
+        imgContainer.style.top = '16px';
         imgContainer.style.left = '20px';
         logoText.style.width = '60px';
         logoText.style.height = '60px';
@@ -222,6 +262,13 @@ const createPreview = () => {
         logoText.style.lineHeight = '25px';
         logoText.style.top = '30px';
         logoText.style.right = '50px';
+
+        dateText.style.width = '60px';
+        dateText.style.height = '60px';
+        dateText.style.fontSize = '6';
+        dateText.style.lineHeight = '6px';
+        dateText.style.top = '88px';
+        dateText.style.right = '50px';
     } else if (state.frameNum == 4) {
         frameW = 600;
         frameH = 1800;
@@ -235,7 +282,18 @@ const createPreview = () => {
         logoText.style.marginLeft = '-30px';
         logoText.style.fontSize = '20';
         logoText.style.lineHeight = '20px';
-        logoText.style.top = '15px';
+        logoText.style.top = '20px';
+
+        dateText.style.width = '100px';
+        dateText.style.height = '10px';
+        dateText.style.fontSize = '6';
+        dateText.style.lineHeight = '6px';
+        dateText.style.top = '70px';
+        dateText.style.left = '50%';
+        dateText.style.marginLeft = '-50px';
+        dateText.style.textAlign = 'center';
+        
+        preview.style.left = '150px';
     } 
 
     preview.style.width = frameW * 0.3 + 'px';
@@ -249,7 +307,7 @@ const createPreview = () => {
         imgDiv.style.width = imgW * 0.3;
         imgDiv.style.height = imgH * 0.3;
         imgDiv.style.objectFit = 'cover';
-
+        imgDiv.style.margin = '2.5px';
         const img = new Image;
         img.src = url;
         const canvas = document.createElement('canvas');
@@ -264,14 +322,14 @@ const createPreview = () => {
         canvas.style.width = `${imgW * 0.3}px`;
         canvas.style.height = `${imgH * 0.3}px`;
         canvas.style.objectFit = 'cover';
-
-        canvas.style.margin = state.frameNum == 1 || state.frameNum == 4 ? '5px': '2.5px';
+        // canvas.style.margin = state.frameNum != 2 ? '5px': '2.5px';
         imgDiv.appendChild(canvas);
         imgContainer.appendChild(imgDiv);
     });
 
     preview.appendChild(imgContainer);
     preview.appendChild(logoText);
+    preview.appendChild(dateText);
     document.body.appendChild(preview);
 
     return preview;

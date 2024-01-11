@@ -119,6 +119,12 @@ body {
   position: absolute;
 }
 
+#dateText {
+  font-family: 'NEXON Lv1 Gothic OTF';
+  position: absolute;
+  opacity: 0.6;
+}
+
 #timer {
   font-family: 'NEXON Lv1 Gothic OTF';
   font-size: 25;
@@ -128,6 +134,15 @@ body {
   top: 100px;
   right: 10px;
   position: absolute;
+}
+
+#downloadBtn {
+  font-family: 'NEXON Lv1 Gothic OTF';
+  width: 180px;
+  height: 60px;
+  bottom: 50px;
+  left: 50%;
+  margin-left: -150px;
 }
 
 .btn {

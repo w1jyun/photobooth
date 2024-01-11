@@ -1,5 +1,5 @@
 import state from './state'
-import step4 from './stage4';
+import step4 from './4.selectDesign';
 import { getCutNum, getImgSize, makeButton } from './utils';
 
 export default () => {
