@@ -4,6 +4,14 @@
 - 촬영할 컷 수를 선택하고 8장의 사진을 촬영한 뒤 컷 수만큼 사진을 선택할 수 있으며 최종 화면에서는 프레임의 색상과 사진 필터를 선택할 수 있습니다.
 - 다운로드 횟수는 무제한이며 새로고침시 저장되지 않고 초기화됩니다.
 
+### Screenshots
+![screenshot0](/assets/screenshot/Screenshot0.png)
+![screenshot1](/assets/screenshot/Screenshot1.png)
+![screenshot2](/assets/screenshot/Screenshot2.png)
+![screenshot3](/assets/screenshot/Screenshot3.png)
+![screenshot4](/assets/screenshot/Screenshot4.png)
+![screenshot5](/assets/screenshot/Screenshot5.png)
+
 ### Setup
 ``` bash
 # Install dependencies (only the first time)
